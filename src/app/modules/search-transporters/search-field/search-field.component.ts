@@ -1,5 +1,16 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Transporter } from 'src/app/shared/models/transporter.model';
 @Component({
   selector: 'app-search-field',
@@ -13,7 +24,6 @@ export class SearchFieldComponent implements OnInit {
   constructor(private formBuilder: FormBuilder) {
     this.cargoForm = this.createCargoForm();
   }
-
   ngOnInit() {}
 
   createCargoForm() {
@@ -38,7 +48,20 @@ export class SearchFieldComponent implements OnInit {
     if (this.cargoForm.valid) {
       this.searchCargo.emit(this.cargoForm.value as Transporter);
       this.cargoForm.reset();
+      this.resetFormControls(this.cargoForm.controls);
     } else {
     }
+  }
+  private resetFormControls(controls: any) {
+    Object.keys(controls).forEach((controlName) => {
+      const control = controls[controlName];
+      if (control instanceof FormControl) {
+        control.markAsPristine();
+        control.markAsUntouched();
+        control.setErrors(null);
+      } else if (control instanceof FormGroup) {
+        this.resetFormControls(control.controls);
+      }
+    });
   }
 }
