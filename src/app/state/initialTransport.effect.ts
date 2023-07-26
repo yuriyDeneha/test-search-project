@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map } from 'rxjs/operators';
 import { ApiService } from '../shared/services/api.service';
 import * as fromActions from './transport.actions';
 
-// effect to handle transport filter action
+//effect to fetch all transports (for initial state)
 @Injectable()
-export class ApiEffects {
+export class InitialTransportEffects {
   fetchFilteredTransports$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(fromActions.FETCH_FILTERED_TRANSPORTERS),
-      mergeMap(({ filters }) =>
-        this.apiService.getFilteredTransporters(filters).pipe(
-          map((filteredTransports) => {
-            return fromActions.fetchFilteredTransportersSuccess({
-              filteredTransports,
+      ofType(fromActions.FETCH_INTIAL_STATE),
+      mergeMap(() =>
+        this.apiService.getAllTransporters().pipe(
+          map((transports) => {
+            return fromActions.fetchInitialStateSuccess({
+              transports,
             });
           })
         )
